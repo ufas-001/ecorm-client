@@ -1,1 +1,19 @@
+name: "CICD for ecorm frontend"
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.13.x
+          cache: npm
+      - name: Echo "Hello, World!"
+        run: echo "Hello World!"
 
