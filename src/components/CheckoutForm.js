@@ -20,14 +20,14 @@ function CheckoutForm() {
         e.preventDefault();
         if (!stripe || !elements || user.cart.count <= 0) return;
         setPaying(true);
-        const { client_secret } = await fetch("http://localhost:8080/create-payment", {
+        const { client_secret } = await fetch("http://localhost:8000/create-payment", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer ",
             },
             body: JSON.stringify({ amount: user.cart.total }),
-        }).then((res) => res.json());
+        }).then((res) => res.json()).then((err) => console.log(err));
         const { paymentIntent } = await stripe.confirmCardPayment(client_secret, {
             payment_method: {
                 card: elements.getElement(CardElement),
