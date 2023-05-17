@@ -1,14 +1,58 @@
-name: "CICD for ecorm frontend"
+name: CI/CD Workflow
 on:
   push:
     branches:
-      - "main"
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: Echo "Hello, World!"
-        run: echo "Hello World!"
+      - main
 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+    
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: ./infra
+
+      - name: Plan Terraform changes
+        run: terraform plan -out=tfplan
+        working-directory: ./infra
+
+      - name: Apply Terraform changes
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./infra
+
+      - name: Retrieve EC2 instance IP
+        id: get_ec2_ip
+        run: |
+          echo "::set-output name=ip::$(terraform output -raw ec2_instance_ip)"
+
+      - name: SSH into the EC2 instance
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${ secrets.AWS_PRIVATE_KEY }
+          host: ${{ steps.get_ec2_ip.outputs.ip }}
+          username: ubuntu          
+
+      - name: Install Node.js
+        run: |
+          sudo apt-get update
+          sudo apt-get install curl
+          curl -s https://deb.nodesource.com/setup_16.x | sudo bash
+          sudo apt install nodejs -y
+
+      - name: Install Nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+          sudo systemctl start nginx
+          sudo systemctl enable nginx
+
+      - name: Clone GitHub repository
+        run: |
+          sudo git clone https://github.com/ufas-001/ecorm-client.git
