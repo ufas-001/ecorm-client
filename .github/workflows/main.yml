@@ -10,7 +10,8 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    outputs:
+      SERVER_PUBLIC_IP: ${ steps.set-ip.outputs.server_public_ip }
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -44,5 +45,5 @@ jobs:
 
       - name: Use EC2 instance IP
         run: |
-          echo "EC2 instance IP: ${{ steps.get_ec2_ip.outputs.client_public_ip }}"
+          echo "$client_public_ip"
       
