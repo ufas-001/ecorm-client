@@ -83,7 +83,7 @@ resource "aws_security_group" "ecorm_client_sg_1" {
   }
 
   tags = {
-    Name = "ecorm_client_sg_1"
+    Name = "ecorm_client_sg"
   }
 }
 

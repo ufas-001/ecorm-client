@@ -42,6 +42,7 @@ jobs:
         run: |
           ip="$(terraform output -raw ec2_instance_ip)"
           echo "::set-output name=ip::$ip"
+        shell: bash
 
       - name: SSH into the EC2 instance.
         uses: appleboy/ssh-action@v0.1.5
