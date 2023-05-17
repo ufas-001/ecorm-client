@@ -96,3 +96,7 @@ resource "aws_instance" "ecorm_client" {
     Name = "ecorm-client"
   }
 }
+
+output "ec2_instance_ip" {
+  value = aws_instance.ecorm_client.public_ip
+}
