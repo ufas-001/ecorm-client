@@ -35,8 +35,13 @@ jobs:
 
       - name: Retrieve EC2 instance IP
         id: get_ec2_ip
+        working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
         run: |
           echo "::set-output name=ip::$(terraform output -raw ec2_instance_ip)"
+
 
       - name: SSH into the EC2 instance
         uses: appleboy/ssh-action@master
