@@ -40,7 +40,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
           AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
         run: |
-          ip=$(terraform output -raw ec2_instance_ip)
+          ip="$(terraform output -raw ec2_instance_ip)"
           echo "::set-output name=ip::$ip"
 
       - name: SSH into the EC2 instance.
