@@ -45,8 +45,8 @@ data "aws_subnets" "main" {
   }
 }
 
-resource "aws_security_group" "ecorm_client_sg" {
-  name        = "ecorm client sg"
+resource "aws_security_group" "ecorm_client_sg_1" {
+  name        = "ecorm client sg 1"
   description = "Allow TLS inbound traffic"
   vpc_id      = data.aws_vpc.main.id
 
@@ -83,7 +83,7 @@ resource "aws_security_group" "ecorm_client_sg" {
   }
 
   tags = {
-    Name = "ecorm_client_sg"
+    Name = "ecorm_client_sg_1"
   }
 }
 
