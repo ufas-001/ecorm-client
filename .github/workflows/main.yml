@@ -51,4 +51,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Set IP env variable
         run:  |- 
-          echo ${ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }
+          echo ${ needs.deploy.outputs.SERVER_PUBLIC_IP }
