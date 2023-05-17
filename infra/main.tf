@@ -89,7 +89,7 @@ resource "aws_security_group" "ecorm_client_sg_1" {
 
 resource "aws_instance" "ecorm_client" {
   ami           = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg_1.id ]
   key_name = "terraformkey"
   instance_type = "t2.micro"
   tags = {
