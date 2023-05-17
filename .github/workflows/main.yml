@@ -43,7 +43,7 @@ jobs:
           ip=$(terraform output -raw ec2_instance_ip)
           echo "::set-output name=ip::$ip"
 
-      - name: SSH into the EC2 instance
+      - name: SSH into the EC2 instance.
         uses: appleboy/ssh-action@v0.1.5
         with:
           key: ${ secrets.AWS_PRIVATE_KEY }
