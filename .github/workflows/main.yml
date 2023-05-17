@@ -4,8 +4,8 @@ on:
     branches:
       - main
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
@@ -23,11 +23,11 @@ jobs:
         working-directory: ./infra
 
       - name: Plan Terraform changes
-        run: terraform plan -out=tfplan
+        run: terraform plan -var="aws_access_key=${{ env.TF_VAR_aws_access_key }}" -var="aws_secret_key=${{ env.TF_VAR_aws_secret_key }}" -out=tfplan
         working-directory: ./infra
 
       - name: Apply Terraform changes
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -var="aws_access_key=${{ env.TF_VAR_aws_access_key }}" -var="aws_secret_key=${{ env.TF_VAR_aws_secret_key }}" -auto-approve tfplan
         working-directory: ./infra
 
       - name: Retrieve EC2 instance IP
