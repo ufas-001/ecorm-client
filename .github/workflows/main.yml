@@ -40,10 +40,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
           AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
         run: |
-          ip=$(python -c 'import subprocess; output = subprocess.run(["terraform", "output", "-raw", "ec2_instance_ip"], capture_output=True, text=True); print(output.stdout.strip())')
-          echo "::set-output name=ip::$ip"
+          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip)"
 
       - name: Use EC2 instance IP
         run: |
-          echo "EC2 instance IP: ${{ steps.get_ec2_ip.outputs.ip }}"
+          echo "EC2 instance IP: ${{ steps.get_ec2_ip.outputs.client_public_ip }}"
       
