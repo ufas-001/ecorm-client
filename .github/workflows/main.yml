@@ -41,10 +41,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
         run: |
           echo "::set-output name=ip::$(terraform output -raw ec2_instance_ip)"
+          echo $ip
 
 
       - name: SSH into the EC2 instance
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.5
         with:
           key: ${ secrets.AWS_PRIVATE_KEY }
           host: ${{ steps.get_ec2_ip.outputs.ip }}
