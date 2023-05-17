@@ -48,7 +48,7 @@ jobs:
     needs: deploy
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set IP env variable
         run:  |- 
-          echo ${ needs.deploy.outputs.CLIENT_PUBLIC_IP }
+          echo "${ needs.deploy.outputs.CLIENT_PUBLIC_IP }"
