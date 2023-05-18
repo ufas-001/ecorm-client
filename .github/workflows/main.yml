@@ -41,7 +41,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
           AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
         run: |
-          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip)"
+          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip):22"
 
   deploy_server:
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
             host: ${{ env.CLIENT_PUBLIC_IP }}
             username: ubuntu
             key: ${{ secrets.AWS_PRIVATE_KEY}}
-            
+
         - name: Install Node.js
           run: |
             sudo apt-get update
