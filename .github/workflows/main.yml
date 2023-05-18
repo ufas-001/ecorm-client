@@ -53,4 +53,4 @@ jobs:
         - name: Set IP env variable
           run: |
             echo "CLIENT_PUBLIC_IP=${{ needs.deploy.outputs.CLIENT_PUBLIC_IP }}" >> $GITHUB_ENV
-            echo $CLIENT_PUBLIC_IP
+            echo ${{ env.CLIENT_PUBLIC_IP }}
