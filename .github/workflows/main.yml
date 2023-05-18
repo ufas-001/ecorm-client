@@ -11,7 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     outputs:
-      CLIENT_PUBLIC_IP: ${ steps.set-ip.outputs.client_public_ip }
+      CLIENT_PUBLIC_IP: ${ steps.get_ec2_ip.outputs.client_public_ip }
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
