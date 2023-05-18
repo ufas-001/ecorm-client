@@ -4,64 +4,61 @@ on:
     branches:
       - main
 env:
-  TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  PRIVATE_SSH_KEY: ${{secrets.AWS_PRIVATE_KEY}}
 
 jobs:
-  deploy:
+  deploy-infra:
     runs-on: ubuntu-latest
     outputs:
-      CLIENT_PUBLIC_IP: ${{ steps.get_ec2_ip.outputs.client_public_ip }}
+      CLIENT_PUBLIC_IP: ${{ steps.set-ip.outputs.client_public_ip }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-    
+        uses: actions/Checkout@v2
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
 
-      - name: Initialize Terraform
-        run: terraform init
+      - name: Terraform init
+        id: init
+        run: terraform init 
+        working-directory: ./infra
+      - name: Terraform plan
+        id: plan
+        run: |-
+          terraform plan \
+          -out=PLAN
+        working-directory: ./infra
+      - name: Terraform apply
+        id: apply
+        run: terraform apply PLAN
+        working-directory: ./infra
+      - name: Set outputs
+        id: set-ip
+        run: |-
+          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip)"
         working-directory: ./infra
 
-      - name: Plan Terraform changes
-        run: terraform plan -var="aws_access_key=${{ env.TF_VAR_aws_access_key }}" -var="aws_secret_key=${{ env.TF_VAR_aws_secret_key }}" -out=tfplan
-        working-directory: ./infra
-
-      - name: Apply Terraform changes
-        run: terraform apply -auto-approve tfplan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
-        working-directory: ./infra
-
-      - name: Retrieve EC2 instance IP
-        id: get_ec2_ip
-        working-directory: ./infra
-        env:
-          AWS_ACCESS_KEY_ID: ${{ env.TF_VAR_aws_access_key }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.TF_VAR_aws_secret_key }}
-        run: |
-          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip):22"
-
-  deploy_server:
+  deploy-server:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: deploy-infra
     steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
-
-        - name: Set IP env variable
-          run: |
-            echo "CLIENT_PUBLIC_IP=${{ needs.deploy.outputs.CLIENT_PUBLIC_IP }}" >> $GITHUB_ENV
-
-        - name: Deploy server to EC2
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ env.CLIENT_PUBLIC_IP }}
-            username: ubuntu
-            key: ${{ secrets.AWS_PRIVATE_KEY}}
-
-        - name: Install Node.js
-          run: |
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set IP env variable
+        run:  |-
+          echo CLIENT_PUBLIC_IP=${{ needs.deploy-infra.outputs.CLIENT_PUBLIC_IP }} >> $GITHUB_ENV
+      - name: Deploy server to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.CLIENT_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ env.PRIVATE_SSH_KEY }}
+          envs: AWS_PRIVATE_KEY,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          script: |-
             sudo apt-get update
-            sudo apt-get install -y nodejs npm
+            sudo apt-get install git -y
