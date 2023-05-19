@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CLIENT_PUBLIC_IP: ${{ steps.set-ip.outputs.client_public_ip }}
+      SERVER_PUBLIC_IP: ${{ steps.set-ip.outputs.server_public_ip }}
     steps:
       - name: Checkout repository
         uses: actions/Checkout@v2
@@ -40,10 +41,11 @@ jobs:
       - name: Set outputs
         id: set-ip
         run: |-
-          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_ip)"
+          echo "::set-output name=client_public_ip::$(terraform output ec2_instance_client_ip)"
+          echo "::set-output name=server_public_ip::$(terraform output ec2_instance_server_ip)"
         working-directory: ./infra
 
-  deploy-:
+  deploy-client:
     runs-on: ubuntu-latest
     needs: deploy-infra
     steps:
@@ -90,4 +92,27 @@ jobs:
             sudo systemctl restart nginx
             sudo systemctl enable nginx
 
-
+  deploy-server:
+    runs-on: ubuntu-latest
+    needs: [deploy-infra]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set IP env variable
+        run:  |-
+          echo SERVER_PUBLIC_IP=${{ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }} >> $GITHUB_ENV
+      - name: Deploy Client to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SERVER_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ env.PRIVATE_SSH_KEY }}
+          envs: AWS_PRIVATE_KEY,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          script: |-
+            sudo apt-get update
+            sudo apt-get install git -y
+            echo "----INSTALL NODE AND NPM----"
+            sudo apt-get install curl
+            sudo curl -s https://deb.nodesource.com/setup_16.x | sudo bash
+            sudo apt install nodejs -y
+            node -v

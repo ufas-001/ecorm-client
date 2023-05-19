@@ -97,6 +97,20 @@ resource "aws_instance" "ecorm_client" {
   }
 }
 
-output "ec2_instance_ip" {
+resource "aws_instance" "ecorm_server" {
+  ami           = data.aws_ami.ubuntu.id
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
+  key_name = "terraformkey"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "ecorm-server"
+  }
+}
+
+output "ec2_instance_client_ip" {
   value = aws_instance.ecorm_client.public_ip
+}
+
+output "ec2_instance_server_ip" {
+  value = aws_instance.ecorm_server.public_ip
 }
