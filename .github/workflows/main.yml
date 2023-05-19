@@ -76,5 +76,18 @@ jobs:
             sudo ufw allow OpenSSH
             sudo ufw allow 'Nginx Full'
             sudo ufw --force enable
-            
+            cd /home/ubuntu
+            sudo rm -rf ecorm-client
+            git clone https://github.com/ufas-001/ecorm-client.git
+            cd ecorm-client
+            npm i
+            sudo rm -rf build
+            npm run build
+            sudo pm2 delete react-build || true
+            pm2 serve build/ 3000 -f --name "react-build" --spa
+            sudo rm -rf /etc/nginx/sites-enabled/default
+            sudo cp -r default /etc/nginx/sites-enabled/
+            sudo systemctl restart nginx
+            sudo systemctl enable nginx
+
 
