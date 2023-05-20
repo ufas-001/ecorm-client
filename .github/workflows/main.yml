@@ -144,5 +144,6 @@ jobs:
             sudo cp -r default /etc/nginx/sites-enabled/
             sudo systemctl restart nginx
             sudo systemctl enable nginx
+            
 
   
