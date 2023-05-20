@@ -140,7 +140,7 @@ jobs:
             sudo rm -rf build
             npm run build
             sudo pm2 delete react-build || true
-            pm2 serve build/ 3001 -f --name "react-build" --spa
+            pm2 serve build/ 3000 -f --name "react-build" --spa
             sudo rm -rf /etc/nginx/sites-enabled/default
             sudo cp -r default /etc/nginx/sites-enabled/
             sudo systemctl restart nginx
