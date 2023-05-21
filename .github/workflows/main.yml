@@ -85,7 +85,7 @@ jobs:
             npm install
             sudo rm -rf .env
             sudo touch .env
-            chmod 777 -R .env
+            sudo chmod 777 -R .env
             sudo echo MONGO_URL="${secrets.MONGO_URL}" >> .env
             echo STRIPE_SECRET="${secrets.STRIPE_SECRET}" >> .env
             echo CLIENT_API= http://"${{ needs.deploy-infra.outputs.CLIENT_PUBLIC_IP }}" >> .env
@@ -137,7 +137,7 @@ jobs:
             npm install
             sudo rm -rf .env
             sudo touch .env
-            chmod 777 -R .env
+            sudo chmod 777 -R .env
             sudo echo REACT_APP_BASE_URL=http://"${{needs.deploy-infra.outputs.SERVER_PUBLIC_IP}}"
             sudo rm -rf build
             npm run build
