@@ -22,7 +22,7 @@ function App() {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     useEffect(() => {
-        const socket = io("ws://localhost:8000");
+        const socket = io(`ws://${REACT_APP_BASE_URL}`);
         socket.off("notification").on("notification", (msgObj, user_id) => {
             // logic for notification
             if (user_id === user._id) {
