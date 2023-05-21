@@ -45,8 +45,8 @@ data "aws_subnets" "main" {
   }
 }
 
-resource "aws_security_group" "ecorm_client_sg" {
-  name        = "ecorm client sg"
+resource "aws_security_group" "ecorm_client_sg_1" {
+  name        = "ecorm client sg 1"
   description = "Allow TLS inbound traffic"
   vpc_id      = data.aws_vpc.main.id
 
@@ -83,13 +83,13 @@ resource "aws_security_group" "ecorm_client_sg" {
   }
 
   tags = {
-    Name = "ecorm_client_sg"
+    Name = "ecorm_client_sg_1"
   }
 }
 
 resource "aws_instance" "ecorm_client" {
   ami           = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg_1.id ]
   key_name = "terraformkey"
   instance_type = "t2.micro"
   tags = {
@@ -99,7 +99,7 @@ resource "aws_instance" "ecorm_client" {
 
 resource "aws_instance" "ecorm_server" {
   ami           = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg_1.id ]
   key_name = "terraformkey"
   instance_type = "t2.micro"
   tags = {
