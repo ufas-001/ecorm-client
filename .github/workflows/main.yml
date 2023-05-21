@@ -8,6 +8,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: us-east-1
   PRIVATE_SSH_KEY: ${{secrets.AWS_PRIVATE_KEY}}
+  STRIPE_SECRET: ${{secrets.STRIPE_SECRET}}
+  MONGO_URL: ${{secrets.MONGO_URL}}
 
 jobs:
   deploy-infra:
@@ -86,8 +88,8 @@ jobs:
             sudo rm -rf .env
             sudo touch .env
             sudo chmod 777 -R .env
-            sudo echo MONGO_URL="${secrets.MONGO_URL}" >> .env
-            echo STRIPE_SECRET="${secrets.STRIPE_SECRET}" >> .env
+            sudo echo MONGO_URL="${env.MONGO_URL}" >> .env
+            echo STRIPE_SECRET="${{env.STRIPE_SECRET}}" >> .env
             echo CLIENT_API= http://"${{ needs.deploy-infra.outputs.CLIENT_PUBLIC_IP }}" >> .env
             sudo rm /etc/nginx/sites-available/default
             sudo cp default /etc/nginx/sites-available/ -r
@@ -138,7 +140,7 @@ jobs:
             sudo rm -rf .env
             sudo touch .env
             sudo chmod 777 -R .env
-            sudo echo REACT_APP_BASE_URL=http://"${{needs.deploy-infra.outputs.SERVER_PUBLIC_IP}}"
+            sudo echo REACT_APP_BASE_URL=http://"${{needs.deploy-infra.outputs.SERVER_PUBLIC_IP}}" >> .env
             sudo rm -rf build
             npm run build
             pm2 serve build/ 3000 -f --name "react-build" --spa
