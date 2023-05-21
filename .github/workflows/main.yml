@@ -85,7 +85,7 @@ jobs:
             npm install
             sudo rm -rf .env
             sudo touch .env
-            echo MONGO_URL="${secrets.MONGO_URL}" >> .env
+            sudo echo MONGO_URL="${secrets.MONGO_URL}" >> .env
             echo STRIPE_SECRET="${secrets.STRIPE_SECRET}" >> .env
             echo CLIENT_API= http://"${{ needs.deploy-infra.outputs.CLIENT_PUBLIC_IP }}" >> .env
             sudo rm /etc/nginx/sites-available/default
@@ -136,7 +136,7 @@ jobs:
             npm install
             sudo rm -rf .env
             sudo touch .env
-            echo REACT_APP_BASE_URL=http://"${{needs.deploy-infra.outputs.SERVER_PUBLIC_IP}}"
+            sudo echo REACT_APP_BASE_URL=http://"${{needs.deploy-infra.outputs.SERVER_PUBLIC_IP}}"
             sudo rm -rf build
             npm run build
             pm2 serve build/ 3000 -f --name "react-build" --spa
