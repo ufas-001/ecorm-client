@@ -84,11 +84,11 @@ jobs:
             sudo rm -rf ecorm-mern
             git clone https://github.com/ufas-001/ecorm-server.git
             cd ecorm-server
-            npm install
+            npm install $ENV
             sudo rm -rf .env
             sudo touch .env
             sudo chmod 777 -R .env
-            sudo echo MONGO_URL= mongodb+srv://abdul:Kaosarat95@cluster0.cwh7nbp.mongodb.net/ >> .env
+            sudo echo MONGO_URL="${{env.MONGO_URL}}" >> .env
             sudo echo STRIPE_SECRET= sk_test_51N7J5xEIAKFbGx0oXvlGiVuOF78VSFD39C97ITjaSb72sydxPheVtVTYCi7DKu39fW2ffBKi97DXAkDdCSgAwHd000iq52VhSz >> .env
             sudo echo CLIENT_API= http://"${{ needs.deploy-infra.outputs.CLIENT_PUBLIC_IP }}" >> .env
             sudo rm /etc/nginx/sites-available/default

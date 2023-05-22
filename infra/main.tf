@@ -5,13 +5,17 @@ terraform {
       version = "~>4.0"
     }
   }
+  backend "s3" {
+    bucket = "ecorm-terraform-lock-bucket"
+    key = "terraform-lock-bucket"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
-  region     = "us-east-1"  # Replace with your desired AWS region
-  /* access_key = var.aws_access_key
-  secret_key = var.aws_secret_key */
+  region     = "us-east-1" 
 }
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -45,8 +49,8 @@ data "aws_subnets" "main" {
   }
 }
 
-resource "aws_security_group" "ecorm_client_sg_1" {
-  name        = "ecorm client sg 1"
+resource "aws_security_group" "ecorm_client_sg" {
+  name        = "ecorm client sg"
   description = "Allow TLS inbound traffic"
   vpc_id      = data.aws_vpc.main.id
 
@@ -83,13 +87,13 @@ resource "aws_security_group" "ecorm_client_sg_1" {
   }
 
   tags = {
-    Name = "ecorm_client_sg_1"
+    Name = "ecorm_client_sg"
   }
 }
 
 resource "aws_instance" "ecorm_client" {
   ami           = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg_1.id ]
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
   key_name = "terraformkey"
   instance_type = "t2.micro"
   tags = {
@@ -99,7 +103,7 @@ resource "aws_instance" "ecorm_client" {
 
 resource "aws_instance" "ecorm_server" {
   ami           = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg_1.id ]
+  vpc_security_group_ids = [ aws_security_group.ecorm_client_sg.id ]
   key_name = "terraformkey"
   instance_type = "t2.micro"
   tags = {
@@ -109,8 +113,10 @@ resource "aws_instance" "ecorm_server" {
 
 output "ec2_instance_client_ip" {
   value = aws_instance.ecorm_client.public_ip
+  sensitive = true
 }
 
 output "ec2_instance_server_ip" {
   value = aws_instance.ecorm_server.public_ip
+  sensitive = true
 }

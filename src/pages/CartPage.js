@@ -1,5 +1,5 @@
 import { Elements } from "@stripe/react-stripe-js";
-// import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import React from "react";
 import { Alert, Col, Container, Row, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
@@ -40,7 +40,7 @@ function CartPage() {
                 {cart.length > 0 && (
                     <Col md={5}>
                         <>
-                            <Table responsive="sm" className="cart-table">
+                            <Table responsive="sm" className="cart-table table-container">
                                 <thead>
                                     <tr>
                                         <th>&nbsp;</th>

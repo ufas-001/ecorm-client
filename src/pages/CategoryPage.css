@@ -10,3 +10,7 @@
     align-items: center;
     color: white;
 }
+
+.table-container{
+    overflow: hidden;
+}
