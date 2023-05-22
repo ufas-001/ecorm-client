@@ -7,7 +7,7 @@ import CheckoutForm from "../components/CheckoutForm";
 import { useIncreaseCartProductMutation, useDecreaseCartProductMutation, useRemoveFromCartMutation } from "../services/appApi";
 import "./CartPage.css";
 
-// const stripePromise = loadStripe("pk_test_51N7J5xEIAKFbGx0o5on3ZTxdYI6CVEgiz76H4FzOrOUWOMObAxPybqeUp437L5rCU9NG8QUtLuROzD5jQQWKhuKY00DJ1STaMQ");
+const stripePromise = loadStripe("pk_test_51N7J5xEIAKFbGx0o5on3ZTxdYI6CVEgiz76H4FzOrOUWOMObAxPybqeUp437L5rCU9NG8QUtLuROzD5jQQWKhuKY00DJ1STaMQ");
 
 function CartPage() {
     const user = useSelector((state) => state.user);
@@ -27,7 +27,7 @@ function CartPage() {
     return (
         <Container style={{ minHeight: "95vh" }} className="cart-container">
             <Row>
-                {/* <Col>
+                <Col>
                     <h1 className="pt-2 h3">Shopping cart</h1>
                     {cart.length == 0 ? (
                         <Alert variant="info">Shopping cart is empty. Add products to your cart</Alert>
@@ -36,7 +36,7 @@ function CartPage() {
                             <CheckoutForm />
                         </Elements>
                     )}
-                </Col> */}
+                </Col>
                 {cart.length > 0 && (
                     <Col md={5}>
                         <>
